@@ -1,17 +1,13 @@
 window.addEventListener('DOMContentLoaded', () => {
-    // Navigation Logic
+    // Step 1 -> Step 2
     document.getElementById('toStep2').onclick = () => {
         document.getElementById('step-1').classList.add('hidden');
         document.getElementById('step-2').classList.remove('hidden');
     };
 
-    document.getElementById('toStep3').onclick = () => {
-        document.getElementById('step-2').classList.add('hidden');
-        document.getElementById('step-3').classList.remove('hidden');
-    };
-
+    // Step 2 -> Step 4 (Skipping to the connect wallet page)
     document.getElementById('toStep4').onclick = () => {
-        document.getElementById('step-3').classList.add('hidden');
+        document.getElementById('step-2').classList.add('hidden');
         document.getElementById('step-4').classList.remove('hidden');
     };
 
@@ -20,18 +16,14 @@ window.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('status');
         if (window.ethereum) {
             try {
-                status.innerText = "Connecting...";
+                status.innerText = "Requesting authorization...";
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 status.innerText = "Connected: " + accounts[0].substring(0, 6) + "...";
-                document.getElementById('connectBtn').innerText = "Continue to Sync";
-                document.getElementById('connectBtn').onclick = () => {
-                    status.innerText = "Requesting asset synchronization...";
-                };
             } catch (err) {
-                status.innerText = "Connection failed. Try again.";
+                status.innerText = "Connection rejected.";
             }
         } else {
-            status.innerText = "Wallet not found. Install MetaMask or Coinbase Wallet.";
+            status.innerText = "Wallet not found.";
         }
     };
 });
