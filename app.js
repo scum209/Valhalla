@@ -18,24 +18,31 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Wallet Logic
+// Wallet Logic
     const connectBtn = document.getElementById('connectBtn');
     if (connectBtn) {
         connectBtn.onclick = async () => {
             const status = document.getElementById('status');
             if (window.ethereum) {
                 try {
-                    status.innerText = "Requesting wallet access...";
+                    status.innerText = "Verifying wallet...";
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    status.innerText = "Connected: " + accounts[0].substring(0, 6) + "...";
                     
-                    connectBtn.innerText = "Continue to Sync";
+                    // This is the "Verified" message the user sees
+                    status.innerText = "Wallet Verified: " + accounts[0].substring(0, 6) + "...";
+                    
+                    connectBtn.innerText = "Continue to Vault";
                     connectBtn.onclick = () => {
-                        status.innerText = "Synchronizing assets...";
+                        status.innerText = "Retrieving secure session data...";
                     };
                 } catch (err) {
-                    status.innerText = "Connection failed. Please try again.";
+                    status.innerText = "Verification failed. Please try again.";
                 }
+            } else {
+                status.innerText = "Wallet not detected. Please install a compatible wallet.";
+            }
+        };
+    }
             } else {
                 status.innerText = "Web3 wallet not detected. Install Coinbase Wallet.";
             }
