@@ -5,6 +5,7 @@
     --cb-grey: #5b616e;
     --cb-border: #eceff1;
 }
+
 body {
     background-color: var(--cb-white);
     color: var(--cb-dark);
@@ -14,15 +15,17 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    -webkit-font-smoothing: antialiased;
 }
+
 .container {
     text-align: center;
     width: 100%;
     max-width: 420px;
     padding: 20px;
 }
+
 .hidden { display: none !important; }
+
 .auth-card {
     background: white;
     border: 1px solid var(--cb-border);
@@ -30,15 +33,17 @@ body {
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
+
 .cb-logo {
-    width: 40px; 
-    height: 40px; 
-    object-fit: contain; 
-    margin: 0 auto 20px; 
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 20px;
     display: block;
 }
+
 h1 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
 p { font-size: 15px; color: var(--cb-grey); line-height: 1.5; margin-bottom: 30px; }
+
 .btn-primary {
     background-color: var(--cb-blue);
     color: white;
@@ -51,7 +56,9 @@ p { font-size: 15px; color: var(--cb-grey); line-height: 1.5; margin-bottom: 30p
     width: 100%;
     transition: 0.2s;
 }
+
 .btn-primary:hover { background-color: #0042cd; }
+
 input {
     width: 100%;
     padding: 12px;
@@ -61,6 +68,7 @@ input {
     box-sizing: border-box;
     font-family: 'Inter';
 }
+
 .footer {
     margin-top: 40px;
     font-size: 11px;
@@ -69,4 +77,21 @@ input {
     justify-content: center;
     gap: 15px;
 }
+
 .footer a { color: #9ca3af; text-decoration: none; }
+
+/* LOADING SPINNER */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--cb-blue);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
