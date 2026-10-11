@@ -21,13 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             document.getElementById('step-2').classList.add('hidden');
+            
             const container = document.querySelector('.container');
             const loading = document.createElement('div');
-            loading.className = 'auth-card';
-            loading.innerHTML = `<div class="loader"></div><p id="l-txt" style="color: #5b616e; font-size: 14px;">Verifying credentials...</p>`;
+            loading.className = 'auth-card loading-container';
+            
+            // Two lines of text: One static, one that changes
+            loading.innerHTML = `
+                <div class="loader"></div>
+                <p style="font-weight: 600; color: #111; font-size: 16px; margin-bottom: 5px;">Verifying Account</p>
+                <p id="l-txt" class="auth-status" style="font-size: 13px; color: #5b616e;">Initializing secure handshake...</p>
+            `;
             container.appendChild(loading);
 
-            const texts = ["Authenticating...", "Securing line...", "Synchronizing account...", "Opening secure vault..."];
+            const texts = [
+                "Authenticating session credentials...",
+                "Establishing encrypted connection...",
+                "Fetching asset ledger details...",
+                "Confirming vault permissions...",
+                "Syncing wallet indices..."
+            ];
+            
             let i = 0;
             const interval = setInterval(() => {
                 document.getElementById('l-txt').innerText = texts[i];
@@ -37,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         loading.remove();
                         document.getElementById('step-3').classList.remove('hidden');
-                    }, 1000);
+                    }, 1500);
                 }
-            }, 900);
+            }, 1200); // Slower speed feels more "real"
         };
     }
 
