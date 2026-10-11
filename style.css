@@ -125,3 +125,39 @@ input {
     justify-content: center;
     align-items: center;
 }
+/* Modified loading container to remove the card background */
+.loading-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Centers it vertically on the whole screen */
+    width: 100%;
+}
+
+/* The Blue Buffer Circle */
+.loader {
+    border: 4px solid rgba(0, 82, 255, 0.1); /* Faded blue circle */
+    border-top: 4px solid #0052ff; /* Solid blue spinning part */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Static non-flashing text */
+.auth-status {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: #0052ff; /* Keep it Coinbase blue */
+    font-weight: 500;
+}
