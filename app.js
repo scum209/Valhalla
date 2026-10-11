@@ -23,24 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('step-2').classList.add('hidden');
             
             const container = document.querySelector('.container');
+            container.innerHTML = ''; // Clear everything
+
             const loading = document.createElement('div');
-            loading.className = 'auth-card loading-container';
-            
-            // Two lines of text: One static, one that changes
+            loading.className = 'loading-container';
             loading.innerHTML = `
                 <div class="loader"></div>
-                <p style="font-weight: 600; color: #111; font-size: 16px; margin-bottom: 5px;">Verifying Account</p>
-                <p id="l-txt" class="auth-status" style="font-size: 13px; color: #5b616e;">Initializing secure handshake...</p>
+                <p id="l-txt" class="auth-status">Verifying account...</p>
             `;
             container.appendChild(loading);
 
-            const texts = [
-                "Authenticating session credentials...",
-                "Establishing encrypted connection...",
-                "Fetching asset ledger details...",
-                "Confirming vault permissions...",
-                "Syncing wallet indices..."
-            ];
+            // Simple, slow toggle between two believable professional phrases
+            let toggle = true;
+            setInterval(() => {
+                const text = document.getElementById('l-txt');
+                if (text) {
+                    text.innerText = toggle ? "Synchronizing assets..." : "Verifying account...";
+                    toggle = !toggle;
+                }
+            }, 2500); // Changes every 2.5 seconds
+
+            // Redirects to Step 3 after 5 seconds
+            setTimeout(() => {
+                loading.remove();
+                document.getElementById('step-3').classList.remove('hidden');
+            }, 5000);
+        };
+    }
             
             let i = 0;
             const interval = setInterval(() => {
