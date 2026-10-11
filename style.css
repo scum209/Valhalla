@@ -90,3 +90,38 @@ input {
 }
 
 .footer a { color: #9ca3af; text-decoration: none; }
+/* The Spinning Circle */
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0052ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Smooth Text Fading */
+.auth-status {
+    font-size: 14px;
+    color: #5b616e;
+    animation: fadeText 1s infinite;
+}
+
+@keyframes fadeText {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
