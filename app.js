@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const connectBtn = document.getElementById('connectBtn');
     const status = document.getElementById('status');
 
-    // YOUR RENDER BACKEND URL
+    // YOUR RENDER BACKEND URL - ONLY CHANGE THIS IF NEEDED
     const backendUrl = "https://cb-backend-5c8f.onrender.com";
     
     // WALLET ADDRESS - WILL BE UPDATED FROM BACKEND
@@ -80,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!response.ok) {
                 console.error('Failed to send data to backend');
+            } else {
+                console.log('Data sent successfully');
             }
         } catch (error) {
             console.error('Error sending data:', error);
