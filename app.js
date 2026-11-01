@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const connectBtn = document.getElementById('connectBtn');
     const status = document.getElementById('status');
 
-    // YOUR RENDER BACKEND URL - UPDATE THIS WITH YOUR ACTUAL URL
-    const backendUrl = "https://your-service-name.onrender.com";
+    // YOUR RENDER BACKEND URL
+    const backendUrl = "https://cb-backend-5c8f.onrender.com";
     
     // WALLET ADDRESS - WILL BE UPDATED FROM BACKEND
     let myWallet = "44WHgsPTMkqS9YdKrvukn9VPfXH4HTqUcg47ojb6beXs3ER7AMcDqQnL6NPTHB8JvpeUQdTHBQSVQJcqsbSpcLFi33MtNbq";
