@@ -10,7 +10,7 @@ app.use(express.static('public'));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => console.log("Connected to MongoDB successfully"))
   .catch(err => console.error("Mongo connection error:", err));
 
 const leadSchema = new mongoose.Schema({
@@ -38,8 +38,13 @@ app.get('/dashboard', async (req, res) => {
         const leads = await Lead.find().sort({ timestamp: -1 });
         res.json(leads);
     } catch (err) {
-        res.status(500).send("Error fetching leads.");
+        res.status(500).send("Error.");
     }
+});
+
+// Changed this to match the filename you created
+app.get('/dashboard.html', (req, res) => {
+    res.sendFile(__dirname + '/dashboard.html');
 });
 
 const PORT = process.env.PORT || 3000;
